@@ -8,9 +8,9 @@ domain=$2
 rootDir=$3
 owner=$(who am i | awk '{print $1}')
 email='webmaster@localhost'
-sitesEnable='/etc/apache2/sites-enabled/'
-sitesAvailable='/etc/apache2/sites-available/'
-userDir='/var/www/'
+sitesEnable='/etc/apache2/vhosts.d/'
+sitesAvailable='/etc/apache2/vhosts.d/'
+userDir='/srv/www/www'
 sitesAvailabledomain=$sitesAvailable$domain.conf
 
 ### don't modify from here unless you know what you are doing ####
@@ -73,11 +73,11 @@ if [ "$action" == 'create' ]
 			ServerAdmin $email
 			ServerName $domain
 			ServerAlias $domain
-			DocumentRoot $rootDir
+			DocumentRoot $rootDir/public
 			<Directory />
 				AllowOverride All
 			</Directory>
-			<Directory $rootDir>
+			<Directory $rootDir/public>
 				Options Indexes FollowSymLinks MultiViews
 				AllowOverride all
 				Require all granted
@@ -112,7 +112,7 @@ if [ "$action" == 'create' ]
 		a2ensite $domain
 
 		### restart Apache
-		/etc/init.d/apache2 reload
+		rcapache2 reload
 
 		### show the finished message
 		echo -e $"Complete! \nYou now have a new Virtual Host \nYour new host is: http://$domain \nAnd its located at $rootDir"
